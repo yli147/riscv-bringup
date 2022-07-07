@@ -7,7 +7,8 @@ This guide walks thru the build of a Debian root filesystem from scratch.
 sudo apt install debootstrap qemu qemu-user-static binfmt-support dpkg-cross debian-ports-archive-keyring --no-install-recommends
 
 # Generate minimal bootstrap rootfs
-sudo debootstrap --arch=riscv64 --foreign --keyring /usr/share/keyrings/debian-ports-archive-keyring.gpg --include=debian-ports-archive-keyring sid ./temp-rootfs http://deb.debian.org/debian-ports
+# sudo debootstrap --arch=riscv64 --foreign --keyring /usr/share/keyrings/debian-ports-archive-keyring.gpg --include=debian-ports-archive-keyring sid ./temp-rootfs http://deb.debian.org/debian-ports
+sudo -E debootstrap --arch=riscv64 --foreign --keyring /usr/share/keyrings/debian-ports-archive-keyring.gpg --include=debian-ports-archive-keyring unstable ./temp-rootfs http://deb.debian.org/debian-ports
 
 # chroot to it. Requires "qemu-user-static qemu-system qemu-utils qemu-system-misc binfmt-support" packages on host
 sudo chroot temp-rootfs /bin/bash
