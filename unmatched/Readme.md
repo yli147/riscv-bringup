@@ -299,6 +299,18 @@ EOF
 # Unmount image
 sudo umount /mnt
 sudo losetup -d /dev/loop0
+
+pushd u-boot
+make qemu-riscv64_smode_defconfig
+make CROSS_COMPILE=riscv64-linux-gnu- -j$(nproc)
+popd
+
+qemu-system-riscv64 \
+-machine virt -nographic -m 2048 -smp 4 \
+-bios opensbi/build/platform/generic/firmware/fw_jump.elf \
+-kernel u-boot/u-boot.bin \
+-device virtio-net-device,netdev=eth0 -netdev user,id=eth0 \
+-drive file=UbuntuHippo-RISC-V.img,format=raw,if=virtio
 ```
 
 Flash to SDCard and resize the root partition
