@@ -9,7 +9,8 @@ Here we will build an Ubuntu Hirsute Hippo (latest version). I recommend doing t
 sudo apt install debootstrap qemu qemu-user-static binfmt-support dpkg-cross --no-install-recommends
 
 # Generate minimal bootstrap rootfs
-sudo debootstrap --arch=riscv64 --foreign hirsute ./temp-rootfs http://ports.ubuntu.com/ubuntu-ports
+# sudo debootstrap --arch=riscv64 --foreign hirsute ./temp-rootfs http://ports.ubuntu.com/ubuntu-ports
+sudo -E debootstrap --arch=riscv64 --foreign jammy ./temp-rootfs http://ports.ubuntu.com/ubuntu-ports
 
 # chroot to it and finish debootstrap
 sudo chroot temp-rootfs /bin/bash
@@ -18,21 +19,45 @@ sudo chroot temp-rootfs /bin/bash
 
 # Add package sources
 cat >/etc/apt/sources.list <<EOF
-deb http://ports.ubuntu.com/ubuntu-ports hirsute main restricted
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy main restricted
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-updates main restricted
 
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-updates main restricted
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy universe
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-updates universe
 
-deb http://ports.ubuntu.com/ubuntu-ports hirsute universe
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-updates universe
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy multiverse
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-updates multiverse
 
-deb http://ports.ubuntu.com/ubuntu-ports hirsute multiverse
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-updates multiverse
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-backports main restricted universe multiverse
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-security main restricted
 
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-backports main restricted universe multiverse
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-security universe
+deb http://linux-ftp.sh.intel.com/pub/mirrors/ubuntu/ jammy-security multiverse
+EOF
 
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-security main restricted
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-security universe
-deb http://ports.ubuntu.com/ubuntu-ports hirsute-security multiverse
+OR 
+
+cat > /etc/apt/apt.conf <<EOF
+Acquire::http::proxy "http://child-prc.intel.com:913";
+Acquire::https::proxy "http://child-prc.intel.com:913";
+EOF
+
+cat >/etc/apt/sources.list <<EOF
+deb http://ports.ubuntu.com/ubuntu-ports jammy main restricted
+
+deb http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted
+
+deb http://ports.ubuntu.com/ubuntu-ports jammy universe
+deb http://ports.ubuntu.com/ubuntu-ports jammy-updates universe
+
+deb http://ports.ubuntu.com/ubuntu-ports jammy multiverse
+deb http://ports.ubuntu.com/ubuntu-ports jammy-updates multiverse
+
+deb http://ports.ubuntu.com/ubuntu-ports jammy-backports main restricted universe multiverse
+
+deb http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted
+deb http://ports.ubuntu.com/ubuntu-ports jammy-security universe
+deb http://ports.ubuntu.com/ubuntu-ports jammy-security multiverse
 EOF
 
 # Install essential packages
