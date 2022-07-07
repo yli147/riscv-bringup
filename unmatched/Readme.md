@@ -296,6 +296,30 @@ label recovery-kernel-$version
         append earlyprintk rw root=/dev/mmcblk0p3 rootfstype=ext4 rootwait console=ttySIF0,115200 LANG=en_US.UTF-8 earlycon single
 EOF
 
+OR 
+
+# Create extlinux.conf file for U-Boot
+sudo mkdir -p /mnt/boot/extlinux
+cat << EOF | sudo tee /mnt/boot/extlinux/extlinux.conf
+menu title SiFive Unmatched Boot Options
+timeout 100
+default kernel-$version
+
+label kernel-$version
+        menu label Linux kernel-$version
+        kernel /boot/vmlinuz-$version
+        fdtdir /boot/dtbs/$version/sifive/
+        initrd /boot/initrd.img-$version
+        append earlyprintk rw root=/dev/mmcblk0p3 rootfstype=ext4 rootwait console=ttySIF0,115200 LANG=en_US.UTF-8 earlycon
+
+label recovery-kernel-$version
+        menu label Linux kernel-$version (recovery mode)
+        kernel /boot/vmlinuz-$version
+        fdtdir /boot/dtbs/$version/sifive/hifive-unmatched-a00.dtb
+        initrd /boot/initrd.img-$version
+        append earlyprintk rw root=/dev/mmcblk0p3 rootfstype=ext4 rootwait console=ttySIF0,115200 LANG=en_US.UTF-8 earlycon single
+EOF
+
 # Unmount image
 sudo umount /mnt
 sudo losetup -d /dev/loop0
