@@ -75,8 +75,9 @@ Adjust the triplet in the `CROSS_COMPILE` according to the used toolchain. The o
 Clone the required repositories. You need OpenSBI (Second stage bootloader), U-Boot and the Linux kernel. I keep all in one directory.
 
 ```sh
-mkdir unmatched
-cd unmatched
+# mkdir unmatched
+git clone https://github.com/yli147/riscv-bringup.git
+cd riscv-bringup/unmatched
 
 # OpenSBI
 git clone https://github.com/riscv/opensbi
@@ -139,9 +140,9 @@ vi arch/riscv/dts/fu740-c000-u-boot.dtsi
 # Check if OpenSBI is exported
 ls -ltr $OPENSBI
 
-CROSS_COMPILE=riscv64-unknown-linux-gnu- make sifive_unmatched_defconfig
-CROSS_COMPILE=riscv64-unknown-linux-gnu- make menuconfig # if needed
-CROSS_COMPILE=riscv64-unknown-linux-gnu- make -j`nproc`
+CROSS_COMPILE=riscv64-linux-gnu- make sifive_unmatched_defconfig
+CROSS_COMPILE=riscv64-linux-gnu- make menuconfig # if needed
+CROSS_COMPILE=riscv64-linux-gnu- make -j`nproc`
 popd
 ```
 
@@ -163,7 +164,7 @@ Apply Unmatched patches until they get upstream and rebase on latest 5.13:
 ```sh
 for f in ../meta-sifive/recipes-kernel/linux/files/*.patch; do echo $f;patch -p1 < $f;done
 # On some Unmatched boards, the DA9063 PMIC is a newer revision not yet supported by upstream Kernel
-patch -p1 ../patches/0001-mfd-da9063-Add-support-for-latest-EA-silicon-revisio.patch
+patch -p1 < ../patches/0001-mfd-da9063-Add-support-for-latest-EA-silicon-revisio.patch
 git rebase origin/linux-5.13.y
 ```
 
@@ -190,12 +191,12 @@ touch .scmversion
 Build the kernel. The `menuconfig` line is in case one want to customize any parameter (adjust the CROSS_COMPILE triplet if using a different toolchain).
 
 ```sh
-make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv olddefconfig
-make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv -j`nproc`
+make CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv olddefconfig
+make CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv -j`nproc`
 
 # Package kernel and modules into a tarball and debian package
-make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1 -j`nproc` tarbz2-pkg
-make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1 -j`nproc` bindeb-pkg
+make CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1 -j`nproc` tarbz2-pkg
+make CROSS_COMPILE=riscv64-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1 -j`nproc` bindeb-pkg
 $$
 # Build version string
 version=`cat include/config/kernel.release`
@@ -211,13 +212,13 @@ The last command will create three `.deb` packages in parent directory. They are
 
 As the root filesystem, you can choose between downloading a pre-built Debian or Ubuntu or build the rootfs yourself.
 
-The pre-built Ubuntu Hippo tarball can be downloaded with: `wget -O rootfs.tar.bz2 https://github.com/carlosedp/riscv-bringup/releases/download/v1.0/UbuntuFocal-riscv64-rootfs.tar.gz`.
+The pre-built Ubuntu Hippo tarball can be downloaded with: `wget -O rootfs.tar.bz2 https://github.com/yli147/riscv-bringup/releases/download/v1.0/UbuntuFocal-riscv64-rootfs.tar.gz`.
 
-The pre-built Debian tarball can be downloaded with: `wget -O rootfs.tar.bz2 https://github.com/carlosedp/riscv-bringup/releases/download/v1.0/debian-sid-riscv64-rootfs-20200108.tar.bz2`.
+The pre-built Debian tarball can be downloaded with: `wget -O rootfs.tar.bz2 https://github.com/yli147/riscv-bringup/releases/download/v1.0/debian-sid-riscv64-rootfs-20200108.tar.bz2`.
 
-If you want to build a Debian rootfs from scratch, [check this guide](https://github.com/carlosedp/riscv-bringup/blob/master/rootfs-Guide.md).
+If you want to build a Debian rootfs from scratch, [check this guide](https://github.com/yli147/riscv-bringup/blob/master/Debian-Rootfs-Guide.md).
 
-If you want to build an Ubuntu rootfs from scratch, [check this guide](https://github.com/carlosedp/riscv-bringup/blob/master/Ubuntu-Rootfs-Guide.md).
+If you want to build an Ubuntu rootfs from scratch, [check this guide](https://github.com/yli147/riscv-bringup/blob/master/Ubuntu-Rootfs-Guide.md).
 
 ## Creating an SDCard Image file
 
