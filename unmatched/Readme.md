@@ -326,6 +326,20 @@ sudo losetup -d /dev/loop0
 
 pushd u-boot
 make qemu-riscv64_smode_defconfig
+vim ./include/configs/qemu-riscv.h
+#define CONFIG_EXTRA_ENV_SETTINGS \
+        "fdt_high=0xffffffffffffffff\0" \
+        "initrd_high=0xffffffffffffffff\0" \
+        "kernel_addr_r=0x84000000\0" \
+        "fdt_addr_r=0x88000000\0" \
+        "scriptaddr=0x88100000\0" \
+        "pxefile_addr_r=0x88200000\0" \
+        "ramdisk_addr_r=0x88300000\0" \
+        "kernel_comp_addr_r=0x90300000\0" \  <=== Add this
+        "kernel_comp_size=0x4000000\0" \   <=== Add this
+        BOOTENV
+#endif
+
 make CROSS_COMPILE=riscv64-linux-gnu- -j$(nproc)
 popd
 
