@@ -310,14 +310,14 @@ label kernel-$version
         kernel /boot/vmlinuz-$version
         fdtdir /boot/dtbs/$version/sifive/
         initrd /boot/initrd.img-$version
-        append earlyprintk rw root=/dev/mmcblk0p3 rootfstype=ext4 rootwait console=ttySIF0,115200 LANG=en_US.UTF-8 earlycon
+        append root=LABEL=cloudimg-rootfs ro earlycon
 
 label recovery-kernel-$version
         menu label Linux kernel-$version (recovery mode)
         kernel /boot/vmlinuz-$version
         fdtdir /boot/dtbs/$version/sifive/hifive-unmatched-a00.dtb
         initrd /boot/initrd.img-$version
-        append earlyprintk rw root=/dev/mmcblk0p3 rootfstype=ext4 rootwait console=ttySIF0,115200 LANG=en_US.UTF-8 earlycon single
+        append root=LABEL=cloudimg-rootfs ro earlycon single
 EOF
 
 # Unmount image
