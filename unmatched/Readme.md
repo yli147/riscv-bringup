@@ -310,14 +310,14 @@ label kernel-$version
         kernel /boot/vmlinuz-$version
         fdtdir /boot/dtbs/$version/sifive/
         initrd /boot/initrd.img-$version
-        append root=LABEL=cloudimg-rootfs ro earlycon
+        append root=LABEL=rootfs ro earlycon
 
 label recovery-kernel-$version
         menu label Linux kernel-$version (recovery mode)
         kernel /boot/vmlinuz-$version
         fdtdir /boot/dtbs/$version/sifive/hifive-unmatched-a00.dtb
         initrd /boot/initrd.img-$version
-        append root=LABEL=cloudimg-rootfs ro earlycon single
+        append root=LABEL=rootfs ro earlycon single
 EOF
 
 # Unmount image
